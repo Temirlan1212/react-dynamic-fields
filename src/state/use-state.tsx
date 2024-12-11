@@ -54,9 +54,16 @@ export const useState = (stateName: StateName) => {
   const getConditionRules = (
     props: Pick<ReactDynamicFieldSchema, "fieldConditions">
   ) => {
-    return (
-      getConditionsRules(props)?.[0] || reactDynamicFieldsSchemaDefaultRules
-    );
+    let conditionRules = reactDynamicFieldsSchemaDefaultRules;
+
+    getConditionsRules(props).map((rules) => {
+      for (let key in rules) {
+        const rule = rules[key as keyof typeof rules];
+        if (rule) conditionRules = { ...conditionRules, [key]: rule };
+      }
+    });
+
+    return conditionRules;
   };
 
   const getFieldSchema = ({
