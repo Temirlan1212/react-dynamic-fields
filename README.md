@@ -1,44 +1,55 @@
-# Dynamic Form Documentation
-
-This project demonstrates a dynamic form implementation using `ReactDynamicFields`, `ReactDynamicField`, and `StateProvider`. The form system allows creating schema-driven forms with conditional logic and dynamic behavior.
+# ReactDynamicFieldsExample
 
 ## Overview
 
-The dynamic form system supports:
+The `ReactDynamicFieldsExample` demonstrates the usage of the `ReactDynamicFields` and `ReactDynamicField` components to dynamically generate and manage form fields in a React application. The example leverages a schema-driven approach for rendering fields, applying conditions, and handling form state using a `StateProvider`.
 
-1. **Schema-Driven Field Rendering**: Form fields are defined by a schema (`ReactDynamicFieldsSchema`) that describes field properties, rules, and conditions.
-2. **Conditional Logic**: Fields dynamically update rules such as `disabled`, `required`, or `maxLength` based on the value of other fields.
-3. **State Management**: The `StateProvider` manages form states, enabling seamless field interactions.
-4. **Reusable Components**: Fields and forms are modular and reusable across different configurations.
+## Features
 
-## Components
+- Dynamically render input and select fields based on schema definitions.
+- Support for field-level rules and conditional logic.
+- Centralized state management for forms using `StateProvider`.
+- Seamless integration with custom controllers to handle field values and validation.
+- Built-in support for rendering multiple independent forms with distinct schemas.
 
-### 1. `StateProvider`
+## Installation
 
-This component provides the context for managing form states. It allows forms and their fields to interact independently.
+Ensure you have the following dependencies installed:
 
-### 2. `ReactDynamicFields`
+```bash
+npm install react react-dom
+```
 
-A component that renders a form based on a schema and provides a `controller` for handling form actions such as field updates and submissions.
-
-### 3. `ReactDynamicField`
-
-A component representing a single field. It renders the field based on its schema and integrates it with the form's state.
-
----
+For the required components (`ReactDynamicFields`, `ReactDynamicField`, and `StateProvider`), ensure they are imported or available in your project.
 
 ## Usage
 
-### 1. Define Field Schemas
+### Code Example
 
-Field schemas define the structure and behavior of form fields. Below is an example schema:
+Below is a minimal implementation of the `ReactDynamicFieldsExample` component:
 
-```typescript
+```tsx
+import { ReactDynamicField, ReactDynamicFields } from "../react-dynamic-fields";
+import { ReactDynamicFieldsSchema } from "../react-dynamic-fields/types";
+import { StateProvider } from "../state";
+
 const fieldsSchema: ReactDynamicFieldsSchema = [
+  {
+    defaultValue: { value: "summary", label: "summary" },
+    fieldType: "select",
+    fieldName: "select-disable",
+    placeholder: "select",
+    rules: {},
+    fieldConditions: [],
+    options: [
+      { value: "title", label: "title" },
+      { value: "summary", label: "summary" },
+    ],
+  },
   {
     fieldType: "string",
     fieldName: "title",
-    placeholder: "Title",
+    placeholder: "Заголовок",
     defaultValue: "",
     rules: {
       required: false,
@@ -49,9 +60,9 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        fieldName: "summary",
-        comparison: "equals",
-        value: "disabled",
+        fieldName: "select-disable",
+        comparison: "deepEquals",
+        value: { value: "title", label: "title" },
         action: {
           rules: {
             disabled: true,
@@ -61,166 +72,147 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     ],
   },
 ];
-```
 
-### 2. Integrate with `ReactDynamicFields`
+const stateName = "exampleForm";
 
-Use the `ReactDynamicFields` component to render the form:
-
-```tsx
-<ReactDynamicFields
-  stateName="formState"
-  renderSchema={({ controller }) => (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        controller.submit({ fieldsSchema });
-      }}
-    >
-      {fieldsSchema.map((fieldSchema, index) => (
-        <ReactDynamicField
-          key={index}
-          fieldSchema={fieldSchema}
-          stateName="formState"
-          renderFields={({ fieldName }) => ({
-            input: ({ rules, value, fieldErrorMessage }) => (
-              <>
-                <input
-                  disabled={rules.disabled}
-                  maxLength={rules.maxLength}
-                  minLength={rules.minLength}
-                  defaultValue={(value as string) || ""}
-                  placeholder={fieldSchema.placeholder}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    controller.updateFieldValue({
-                      fieldName,
-                      value,
-                    });
-                  }}
-                />
-                {fieldErrorMessage}
-              </>
-            ),
-          })}
-        />
-      ))}
-      <button type="submit">Submit</button>
-    </form>
-  )}
-/>
-```
-
-### 3. Add Conditional Logic
-
-Field conditions allow dynamic updates based on other field values. For example:
-
-```typescript
-fieldConditions: [
-  {
-    fieldName: "summary",
-    comparison: "equals",
-    value: "disabled",
-    action: {
-      rules: {
-        disabled: true,
-      },
-    },
-  },
-];
-```
-
-When the `summary` field equals "disabled," the `title` field will be disabled.
-
-### 4. State Management
-
-Each form uses a unique `stateName` to manage its state. This ensures independence between forms:
-
-```tsx
-const stateName = "form1";
-const stateName2 = "form2";
-
-<StateProvider>
-  <ReactDynamicFields stateName={stateName} renderSchema={...} />
-  <ReactDynamicFields stateName={stateName2} renderSchema={...} />
-</StateProvider>
-```
-
----
-
-## Example
-
-Below is a complete example:
-
-```tsx
 export function ReactDynamicFieldsExample() {
   return (
     <StateProvider>
       <ReactDynamicFields
-        stateName="exampleForm"
-        renderSchema={({ controller }) => (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              controller.submit({ fieldsSchema });
-            }}
-          >
-            {fieldsSchema.map((fieldSchema, index) => (
-              <ReactDynamicField
-                key={index}
-                fieldSchema={fieldSchema}
-                stateName="exampleForm"
-                renderFields={({ fieldName }) => ({
-                  input: ({ rules, value, fieldErrorMessage }) => (
-                    <>
-                      <input
-                        disabled={rules.disabled}
-                        maxLength={rules.maxLength}
-                        minLength={rules.minLength}
-                        defaultValue={(value as string) || ""}
-                        placeholder={fieldSchema.placeholder}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          controller.updateFieldValue({
-                            fieldName,
-                            value,
-                          });
-                        }}
-                      />
-                      {fieldErrorMessage}
-                    </>
-                  ),
-                })}
-              />
-            ))}
-            <button type="submit">Submit</button>
-          </form>
-        )}
+        stateName={stateName}
+        renderSchema={({ controller }) => {
+          return (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                controller.submit({ fieldsSchema });
+                console.log(controller.getValues());
+              }}
+            >
+              {fieldsSchema.map((fieldSchema, index) => (
+                <ReactDynamicField
+                  key={index}
+                  renderFields={({ fieldName }) => {
+                    return {
+                      input: ({ rules, value, fieldErrorMessage }) => (
+                        <>
+                          <input
+                            disabled={rules.disabled}
+                            maxLength={rules.maxLength}
+                            defaultValue={value || ""}
+                            placeholder={fieldSchema.placeholder}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              controller.updateFieldValue({
+                                fieldName,
+                                value,
+                              });
+                            }}
+                          />
+                          {fieldErrorMessage}
+                        </>
+                      ),
+                      select: ({ value, options, fieldErrorMessage }) => (
+                        <>
+                          <select
+                            defaultValue={value?.value}
+                            onChange={(e) => {
+                              const selectedValue = e.target.value;
+                              const option = options.find(
+                                (opt) => opt.value === selectedValue
+                              );
+                              if (!option) return;
+                              controller.updateFieldValue({
+                                fieldName,
+                                value: option,
+                              });
+                            }}
+                          >
+                            {options.map((option, idx) => (
+                              <option key={idx} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          {fieldErrorMessage}
+                        </>
+                      ),
+                    };
+                  }}
+                  fieldSchema={fieldSchema}
+                  stateName={stateName}
+                />
+              ))}
+
+              <button type="submit">Submit</button>
+            </form>
+          );
+        }}
       />
     </StateProvider>
   );
 }
 ```
 
----
+### Props
 
-## Features
+#### `ReactDynamicFields`
 
-- Dynamic field generation based on schema
-- Conditional rules for field behavior
-- Modular and reusable components
-- State isolation for multiple forms
+| Prop           | Type                    | Description                                 |
+| -------------- | ----------------------- | ------------------------------------------- |
+| `stateName`    | `string`                | Unique identifier for form state.           |
+| `renderSchema` | `(args) => JSX.Element` | Function to render form schema dynamically. |
 
----
+#### `ReactDynamicField`
 
-## Future Improvements
+| Prop           | Type                    | Description                                |
+| -------------- | ----------------------- | ------------------------------------------ |
+| `fieldSchema`  | `FieldSchema`           | Schema defining the field's configuration. |
+| `stateName`    | `string`                | Unique identifier for form state.          |
+| `renderFields` | `(args) => JSX.Element` | Function to render specific field types.   |
 
-- Add support for additional field types (e.g., `select`, `checkbox`)
-- Enhance validation rules
-- Improve styling and theming support
+## Field Schema Structure
 
----
+Each field in the schema should adhere to the following structure:
+
+```ts
+{
+  fieldType: "string" | "select";  // Type of the field.
+  fieldName: string;               // Unique name for the field.
+  placeholder?: string;            // Placeholder text for the field.
+  defaultValue?: any;              // Default value for the field.
+  rules?: {
+    required?: boolean;
+    maxLength?: number;
+    minLength?: number;
+    hidden?: boolean;
+    disabled?: boolean;
+  };
+  options?: Array<{ value: string; label: string }>; // For select fields only.
+  fieldConditions?: Array<{
+    fieldName: string;
+    comparison: "equals" | "deepEquals";
+    value: any;
+    action: {
+      rules: Partial<Rules>;
+    };
+  }>;
+}
+```
+
+## How It Works
+
+1. Define a schema (`fieldsSchema`) to configure fields and their behavior.
+2. Use `ReactDynamicFields` to render the form dynamically based on the schema.
+3. Handle state and actions via the provided `controller`.
+4. Optionally apply conditional logic through `fieldConditions` in the schema.
+
+## Running the Example
+
+1. Integrate the component into your project.
+2. Define `fieldsSchema` and ensure that `StateProvider` wraps your component tree.
+3. Test dynamic rendering and conditional logic.
 
 ## License
 
-This project is licensed under [MIT License](LICENSE).
+This example is available under the MIT License.
