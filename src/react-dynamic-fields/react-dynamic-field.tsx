@@ -1,5 +1,8 @@
 "use client";
-import { ReactDynamicFieldProps } from "./types";
+import {
+  ReactDynamicFieldProps,
+  ReactDynamicFieldsFieldsSchemaTypes,
+} from "./types";
 import { useState } from "../state/use-state";
 import { useEffect } from "react";
 
@@ -37,24 +40,38 @@ export function ReactDynamicField({
 
   if (rules.hidden) return null;
 
-  const { input, number } = renderFields({ fieldName });
+  const { input, number, select } = renderFields({ fieldName });
 
   const renderInput = () => {
-    if (fieldType === "string" && input) {
+    if (fieldType === "string" && input && typeof fieldValue === typeof "") {
       return input({
         rules: rules,
-        value: fieldValue,
+        value:
+          fieldValue as ReactDynamicFieldsFieldsSchemaTypes["string"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
       });
     }
   };
 
   const renderNumber = () => {
-    if (fieldType === "number" && number) {
+    if (fieldType === "number" && number && typeof fieldValue === typeof 0) {
       return number({
         rules: rules,
-        value: fieldValue,
+        value:
+          fieldValue as ReactDynamicFieldsFieldsSchemaTypes["number"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
+      });
+    }
+  };
+
+  const renderSelect = () => {
+    if (fieldType === "select" && select) {
+      return select({
+        rules: rules,
+        value:
+          fieldValue as ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"],
+        fieldErrorMessage: fieldErrorMessage,
+        options: fieldSchema["options"],
       });
     }
   };
@@ -63,6 +80,7 @@ export function ReactDynamicField({
     <>
       {renderInput()}
       {renderNumber()}
+      {renderSelect()}
     </>
   );
 }

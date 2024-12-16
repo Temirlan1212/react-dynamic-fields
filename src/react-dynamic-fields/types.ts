@@ -1,4 +1,9 @@
-import { FieldSchema, FieldSchemaRules, FieldsSchema } from "../fields-schema";
+import {
+  FieldSchema,
+  FieldSchemaRules,
+  FieldsSchema,
+  FieldSchemaFieldsValueVariants,
+} from "../fields-schema";
 import {
   StateFieldValueTypes,
   FieldsSchemaTypes,
@@ -13,10 +18,12 @@ export type ReactDynamicFieldsFieldsSchemaTypes = FieldsSchemaTypes;
 export type ReactDynamicFieldsUseStateReturnType = UseStateReturnType;
 
 export type ReactDynamicFieldsValueTypes = StateFieldValueTypes;
+export type ReactDynamicFieldSchemaFieldsValueVariants =
+  FieldSchemaFieldsValueVariants;
 
-export type ReactDynamicFieldsRenderField<Rules> = {
+export type ReactDynamicFieldsRenderField<Rules, Value> = {
   rules: Rules;
-  value: ReactDynamicFieldsValueTypes;
+  value: Value;
   fieldErrorMessage: string;
 };
 
@@ -27,13 +34,23 @@ export type ReactDynamicFieldsRenderFields = ({
 }) => {
   input?: (
     props: ReactDynamicFieldsRenderField<
-      ReactDynamicFieldsFieldsSchemaTypes["string"]["rules"]
+      ReactDynamicFieldsFieldsSchemaTypes["string"]["rules"],
+      ReactDynamicFieldsFieldsSchemaTypes["string"]["defaultValue"]
     >
   ) => React.ReactNode;
   number?: (
     props: ReactDynamicFieldsRenderField<
-      ReactDynamicFieldsFieldsSchemaTypes["number"]["rules"]
+      ReactDynamicFieldsFieldsSchemaTypes["number"]["rules"],
+      ReactDynamicFieldsFieldsSchemaTypes["number"]["defaultValue"]
     >
+  ) => React.ReactNode;
+  select?: (
+    props: ReactDynamicFieldsRenderField<
+      ReactDynamicFieldsFieldsSchemaTypes["select"]["rules"],
+      ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"]
+    > & {
+      options: ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"][];
+    }
   ) => React.ReactNode;
 };
 

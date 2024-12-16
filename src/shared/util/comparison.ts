@@ -1,4 +1,5 @@
 export type ComparisonTypes =
+  | "deepEquals"
   | "equals"
   | "notEquals"
   | "greaterThan"
@@ -15,6 +16,8 @@ export function compareValues<T>(
   switch (comparison) {
     case "equals":
       return value1 === value2;
+    case "deepEquals":
+      return JSON.stringify(value1) === JSON.stringify(value2);
     case "notEquals":
       return value1 !== value2;
     case "greaterThan":

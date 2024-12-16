@@ -106,6 +106,7 @@ export type FieldSelectSchema = {
   fieldConditions: FieldsSchemaCondition<FieldSelectSchemaRules>[];
   rules: FieldSelectSchemaRules;
   defaultValue: FieldSchemaFieldsValueVariants["OPTION"];
+  options: FieldSchemaFieldsValueVariants["OPTION"][];
 };
 
 export type FieldSchema =

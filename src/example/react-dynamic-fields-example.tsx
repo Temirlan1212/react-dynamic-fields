@@ -4,6 +4,18 @@ import { StateProvider } from "../state";
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {
+    defaultValue: { value: "summary", label: "summary" },
+    fieldType: "select",
+    fieldName: "select-disable",
+    placeholder: "select",
+    rules: {},
+    fieldConditions: [],
+    options: [
+      { value: "title", label: "title" },
+      { value: "summary", label: "summary" },
+    ],
+  },
+  {
     fieldType: "string",
     fieldName: "title",
     placeholder: "Заголовок",
@@ -17,9 +29,9 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        fieldName: "summary",
-        comparison: "equals",
-        value: "disabled",
+        fieldName: "select-disable",
+        comparison: "deepEquals",
+        value: { value: "title", label: "title" },
         action: {
           rules: {
             disabled: true,
@@ -56,12 +68,12 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     defaultValue: "",
     fieldConditions: [
       {
-        fieldName: "feedback",
-        comparison: "equals",
-        value: "required",
+        fieldName: "select-disable",
+        comparison: "deepEquals",
+        value: { value: "summary", label: "summary" },
         action: {
           rules: {
-            required: true,
+            disabled: true,
           },
         },
       },
@@ -120,6 +132,7 @@ export function ReactDynamicFieldsExample() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   controller.submit({ fieldsSchema });
+                  console.log(controller.getValues());
                 }}
               >
                 {fieldsSchema.map((fieldSchema, index) => {
@@ -135,9 +148,9 @@ export function ReactDynamicFieldsExample() {
                                   disabled={rules.disabled}
                                   maxLength={rules.maxLength}
                                   minLength={rules.minLength}
-                                  defaultValue={(value as string) || ""}
+                                  defaultValue={value || ""}
                                   className="border"
-                                  value={(value as string) || ""}
+                                  value={value || ""}
                                   placeholder={fieldSchema.placeholder}
                                   onChange={(e) => {
                                     const value = e.target.value;
@@ -147,6 +160,42 @@ export function ReactDynamicFieldsExample() {
                                     });
                                   }}
                                 />
+                                {fieldErrorMessage}
+                              </>
+                            );
+                          },
+                          select: ({ value, options, fieldErrorMessage }) => {
+                            if (value == null) return;
+
+                            return (
+                              <>
+                                <select
+                                  defaultValue={value.value}
+                                  name={value.value}
+                                  id={value.value}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    const option = options.find(
+                                      (option) => option.value === value
+                                    );
+                                    if (!option) return;
+                                    controller.updateFieldValue({
+                                      fieldName,
+                                      value: option,
+                                    });
+                                  }}
+                                >
+                                  {options.map((option, index) => {
+                                    return (
+                                      <option
+                                        key={index + " " + option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
                                 {fieldErrorMessage}
                               </>
                             );
