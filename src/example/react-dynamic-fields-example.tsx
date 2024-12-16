@@ -1,6 +1,9 @@
-import { ReactDynamicField, ReactDynamicFields } from "../react-dynamic-fields";
-import { ReactDynamicFieldsSchema } from "../react-dynamic-fields/types";
-import { StateProvider } from "../state";
+import {
+  ReactDynamicField,
+  ReactDynamicFields,
+  ReactDynamicFieldsProvider,
+  ReactDynamicFieldsSchema,
+} from "../react-dynamic-fields";
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {
@@ -123,7 +126,7 @@ const stateName2 = "newForm-2";
 export function ReactDynamicFieldsExample() {
   return (
     <>
-      <StateProvider>
+      <ReactDynamicFieldsProvider>
         <ReactDynamicFields
           stateName={stateName}
           renderSchema={({ controller }) => {
@@ -266,7 +269,7 @@ export function ReactDynamicFieldsExample() {
             );
           }}
         />
-      </StateProvider>
+      </ReactDynamicFieldsProvider>
     </>
   );
 }

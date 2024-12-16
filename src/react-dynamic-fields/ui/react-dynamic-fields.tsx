@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "../state/use-state";
 import { ReactDynamicField } from "./react-dynamic-field";
-import { ReactDynamicFieldsProps } from "./types";
+import { ReactDynamicFieldsProps } from "../types";
 
 export function ReactDynamicFields({
   renderSchema,

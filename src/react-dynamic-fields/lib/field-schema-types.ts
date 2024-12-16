@@ -1,10 +1,5 @@
-import {
-  StateName,
-  StateFieldsValues,
-  StateFieldValueTypes,
-} from "../shared/shared-types";
-import { ComparisonTypes } from "../shared/util/comparison";
-import { FIELDS_TYPES, FieldsTypes } from "../shared/util/fields";
+import { ComparisonTypes } from "../lib/comparison";
+import { FIELDS_TYPES, FieldsTypes } from "../lib/fields";
 
 export type Option = Record<string, string>;
 export type Options = Option[];
@@ -20,9 +15,8 @@ export type FieldSchemaFieldsValues =
   | FieldSchemaFieldsValueVariants["STRING"]
   | FieldSchemaFieldsValueVariants["OPTION"];
 
-export type FieldSchemaFieldName = StateName;
+export type FieldSchemaFieldName = string;
 export type FieldSchemaDepandsFieldName = FieldSchemaFieldName;
-export type FieldSchemaValueTypes = StateFieldValueTypes;
 export type FieldSchemaFieldTypes = FieldsTypes;
 export const FIELD_SCHEMA_FIELD_TYPES = FIELDS_TYPES;
 
@@ -48,7 +42,7 @@ export type FieldSchemaAction<Rules> = {
 export type FieldsSchemaCondition<Rules> = {
   fieldName: FieldSchemaDepandsFieldName;
   comparison: ComparisonTypes;
-  value: FieldSchemaValueTypes;
+  value: FieldSchemaFieldsValues;
   action: FieldSchemaAction<Rules>;
 };
 

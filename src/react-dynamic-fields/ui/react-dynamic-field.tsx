@@ -2,7 +2,7 @@
 import {
   ReactDynamicFieldProps,
   ReactDynamicFieldsFieldsSchemaTypes,
-} from "./types";
+} from "../types";
 import { useState } from "../state/use-state";
 import { useEffect } from "react";
 

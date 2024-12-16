@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { StatesStatusProps, useStatesService } from "./states.service";
 import { StateFieldsSchema, StateName, UseStateMethodsParams } from "./types";
-import { ReactDynamicFieldSchema } from "../react-dynamic-fields/types";
-import { compareValues } from "../shared/util/comparison";
-import { reactDynamicFieldsSchemaDefaultRules } from "../react-dynamic-fields";
+import { ReactDynamicFieldSchema } from "../types";
+import { compareValues } from "../lib/comparison";
+import { reactDynamicFieldsSchemaDefaultRules } from "..";
 
 export const useState = (stateName: StateName) => {
   const {

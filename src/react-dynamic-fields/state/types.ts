@@ -1,4 +1,7 @@
-import { FieldSchemaFieldsValues, FieldsSchema } from "../shared/shared-types";
+import {
+  FieldSchemaFieldsValues,
+  FieldsSchema,
+} from "../lib/field-schema-types";
 
 export type StateFieldValueTypes = FieldSchemaFieldsValues;
 export type StateName = string;

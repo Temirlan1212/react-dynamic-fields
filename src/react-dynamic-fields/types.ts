@@ -3,13 +3,9 @@ import {
   FieldSchemaRules,
   FieldsSchema,
   FieldSchemaFieldsValueVariants,
-} from "../fields-schema";
-import {
-  StateFieldValueTypes,
   FieldsSchemaTypes,
-  StateName,
-} from "../shared/shared-types";
-import { UseStateReturnType } from "../state/use-state";
+} from "./lib/field-schema-types";
+import { StateFieldValueTypes, StateName, UseStateReturnType } from "./state";
 
 export type ReactDynamicFieldSchema = FieldSchema;
 export type ReactDynamicFieldsSchema = FieldsSchema;

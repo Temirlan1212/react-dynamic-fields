@@ -1,4 +1,4 @@
-import { ReactDynamicFieldsSchemaRules } from "./types";
+import { ReactDynamicFieldsSchemaRules } from "../types";
 
 export const reactDynamicFieldsSchemaDefaultRules: ReactDynamicFieldsSchemaRules =
   {
