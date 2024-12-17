@@ -3,7 +3,7 @@ import {
   ReactDynamicFields,
   ReactDynamicFieldsProvider,
   ReactDynamicFieldsSchema,
-} from "../react-dynamic-fields";
+} from "react-dynamic-fields-core";
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {

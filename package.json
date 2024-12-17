@@ -1,14 +1,25 @@
 {
-  "name": "react-dynamic-fields-kit",
+  "name": "react-dynamic-fields-core",
   "private": false,
-  "version": "2.0.1",
+  "description": "A simple ui library for React",
+  "version": "1.0.0",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./dist/style.css"
+  },
   "files": [
-    "dist",
-    "src",
-    "src/react-dynamic-fields"
+    "/dist"
   ],
-  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -17,7 +28,8 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "vite-plugin-dts": "^4.3.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",
@@ -25,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
