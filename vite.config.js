@@ -9,7 +9,7 @@ export default defineConfig({
             //Defines the entry point for the library build. It resolves
             //to src/index.ts,indicating that the library starts from this file.
             entry: path.resolve(__dirname, "src/index.ts"),
-            name: "react-schema-fields",
+            name: "react-dynamic-fields-core",
             //A function that generates the output file
             //name for different formats during the build
             fileName: function (format) { return "index.".concat(format, ".js"); },

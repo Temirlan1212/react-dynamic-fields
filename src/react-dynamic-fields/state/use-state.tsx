@@ -4,6 +4,7 @@ import { StateFieldsSchema, StateName, UseStateMethodsParams } from "./types";
 import { ReactDynamicFieldSchema } from "../types";
 import { compareValues } from "../lib/comparison";
 import { reactDynamicFieldsSchemaDefaultRules } from "..";
+import { FieldSchemaStylesProperties } from "../lib/field-schema-types";
 
 export const useState = (stateName: StateName) => {
   const {
@@ -39,31 +40,53 @@ export const useState = (stateName: StateName) => {
     return statesTouchedFields[stateName] || {};
   }, [statesTouchedFields, stateName]);
 
-  const getConditionsRules = ({
+  const getMatchedConditions = ({
     fieldConditions,
   }: Pick<ReactDynamicFieldSchema, "fieldConditions">) => {
     return fieldConditions
-      .map(({ value, comparison, action, fieldName }) => {
-        const targetValue = getValues()?.[fieldName];
+      .map((condition) => {
+        const { value, comparison, depandFieldName } = condition;
+        const targetValue = getValues()?.[depandFieldName];
         const isMatch = compareValues(targetValue, value, comparison);
-        return isMatch ? action.rules : null;
+        return isMatch ? condition : null;
       })
       .filter((item) => item != null);
   };
 
-  const getConditionRules = (
+  const getConditionActionProperties = (
     props: Pick<ReactDynamicFieldSchema, "fieldConditions">
   ) => {
     let conditionRules = reactDynamicFieldsSchemaDefaultRules;
+    let conditionStyles: FieldSchemaStylesProperties["style"] | undefined =
+      undefined;
+    let conditionClassNames: FieldSchemaStylesProperties["className"][] = [];
 
-    getConditionsRules(props).map((rules) => {
+    getMatchedConditions(props).forEach((condition) => {
+      const rules = condition.action.rules;
+      const styles = condition.action.styles?.style;
+      const className = condition.action.styles?.className;
+
       for (let key in rules) {
         const rule = rules[key as keyof typeof rules];
         if (rule) conditionRules = { ...conditionRules, [key]: rule };
       }
+
+      for (let key in styles) {
+        const style = styles[key as keyof typeof styles];
+        if (conditionStyles == null) conditionStyles = {};
+        if (style) conditionStyles = { ...conditionStyles, [key]: style };
+      }
+
+      conditionClassNames.push(className);
     });
 
-    return conditionRules;
+    return {
+      rules: conditionRules,
+      styles: {
+        style: conditionStyles,
+        className: conditionClassNames.join(" "),
+      },
+    };
   };
 
   const getFieldSchema = ({
@@ -85,7 +108,7 @@ export const useState = (stateName: StateName) => {
       Object.keys(currentValues).forEach((fieldName) => {
         const fieldSchema = getFieldSchema({ fieldsSchema, byName: fieldName });
         if (fieldSchema == null) return;
-        const conditionRules = getConditionRules({
+        const conditionActionProperties = getConditionActionProperties({
           fieldConditions: fieldSchema.fieldConditions,
         });
 
@@ -98,7 +121,7 @@ export const useState = (stateName: StateName) => {
           result = validateField({
             stateName,
             fieldName,
-            rules: conditionRules,
+            rules: conditionActionProperties.rules,
           });
         if (result.error) {
           errors[fieldName] = result.error;
@@ -140,9 +163,8 @@ export const useState = (stateName: StateName) => {
     getStateStatus,
     getValues,
     getErrors,
-    getConditionsRules,
-    getConditionRules,
     getTouchedFields,
+    getConditionActionProperties,
     updateFieldValue: (params: UseStateMethodsParams["updateFieldValue"]) =>
       updateFieldValue({ ...params, stateName }),
     updateFieldRules: (params: UseStateMethodsParams["updateFieldRules"]) =>

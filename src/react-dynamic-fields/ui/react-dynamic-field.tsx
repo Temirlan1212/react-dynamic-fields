@@ -21,7 +21,11 @@ export function ReactDynamicField({
   const fieldValue = fieldValuesState[fieldName];
   const fieldErrorMessage = fieldErrorsState[fieldName];
 
-  const rules = stateMethods.getConditionRules({ fieldConditions });
+  const conditionActionProperties = stateMethods.getConditionActionProperties({
+    fieldConditions,
+  });
+
+  const rules = conditionActionProperties.rules;
 
   useEffect(() => {
     const stateStatus = stateMethods.getStateStatus();
@@ -45,7 +49,7 @@ export function ReactDynamicField({
   const renderInput = () => {
     if (fieldType === "string" && input && typeof fieldValue === typeof "") {
       return input({
-        rules: rules,
+        actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["string"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
@@ -56,7 +60,7 @@ export function ReactDynamicField({
   const renderNumber = () => {
     if (fieldType === "number" && number && typeof fieldValue === typeof 0) {
       return number({
-        rules: rules,
+        actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["number"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
@@ -67,7 +71,7 @@ export function ReactDynamicField({
   const renderSelect = () => {
     if (fieldType === "select" && select) {
       return select({
-        rules: rules,
+        actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,

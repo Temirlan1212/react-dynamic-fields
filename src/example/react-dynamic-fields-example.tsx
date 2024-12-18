@@ -3,7 +3,7 @@ import {
   ReactDynamicFields,
   ReactDynamicFieldsProvider,
   ReactDynamicFieldsSchema,
-} from "react-dynamic-fields-core";
+} from "../react-dynamic-fields";
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {
@@ -23,6 +23,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     fieldName: "title",
     placeholder: "Заголовок",
     defaultValue: "",
+    style: { width: "600px" },
     rules: {
       required: false,
       maxLength: undefined,
@@ -32,17 +33,21 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        fieldName: "select-disable",
+        depandFieldName: "select-disable",
         comparison: "deepEquals",
         value: { value: "title", label: "title" },
         action: {
           rules: {
             disabled: true,
           },
+          styles: {
+            style: { width: "10px" },
+            className: "",
+          },
         },
       },
       {
-        fieldName: "summary",
+        depandFieldName: "summary",
         comparison: "equals",
         value: "limited",
         action: {
@@ -52,7 +57,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
         },
       },
       {
-        fieldName: "new",
+        depandFieldName: "new",
         comparison: "equals",
         value: "required",
         action: {
@@ -71,7 +76,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     defaultValue: "",
     fieldConditions: [
       {
-        fieldName: "select-disable",
+        depandFieldName: "select-disable",
         comparison: "deepEquals",
         value: { value: "summary", label: "summary" },
         action: {
@@ -107,7 +112,7 @@ const fieldsSchema2: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        fieldName: "summary",
+        depandFieldName: "summary",
         comparison: "equals",
         value: "disabled",
         action: {
@@ -144,10 +149,15 @@ export function ReactDynamicFieldsExample() {
                       key={index}
                       renderFields={({ fieldName }) => {
                         return {
-                          input: ({ rules, value, fieldErrorMessage }) => {
+                          input: ({
+                            actionProperties: { rules, styles },
+                            value,
+                            fieldErrorMessage,
+                          }) => {
                             return (
                               <>
                                 <input
+                                  style={styles?.style || fieldSchema.style}
                                   disabled={rules.disabled}
                                   maxLength={rules.maxLength}
                                   minLength={rules.minLength}
@@ -233,7 +243,11 @@ export function ReactDynamicFieldsExample() {
                       key={index}
                       renderFields={({ fieldName }) => {
                         return {
-                          input: ({ rules, value, fieldErrorMessage }) => {
+                          input: ({
+                            actionProperties: { rules },
+                            value,
+                            fieldErrorMessage,
+                          }) => {
                             return (
                               <>
                                 <input

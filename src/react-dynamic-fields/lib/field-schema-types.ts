@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { ComparisonTypes } from "../lib/comparison";
 import { FIELDS_TYPES, FieldsTypes } from "../lib/fields";
 
@@ -16,9 +17,14 @@ export type FieldSchemaFieldsValues =
   | FieldSchemaFieldsValueVariants["OPTION"];
 
 export type FieldSchemaFieldName = string;
-export type FieldSchemaDepandsFieldName = FieldSchemaFieldName;
+export type FieldSchemaDepandFieldName = FieldSchemaFieldName;
 export type FieldSchemaFieldTypes = FieldsTypes;
 export const FIELD_SCHEMA_FIELD_TYPES = FIELDS_TYPES;
+
+export type FieldSchemaStylesProperties = {
+  style?: CSSProperties;
+  className?: string;
+};
 
 export type FieldSchemaRules = {
   hidden?: boolean | undefined;
@@ -37,10 +43,11 @@ export type FieldSchemaRules = {
 
 export type FieldSchemaAction<Rules> = {
   rules: Rules;
+  styles?: FieldSchemaStylesProperties;
 };
 
 export type FieldsSchemaCondition<Rules> = {
-  fieldName: FieldSchemaDepandsFieldName;
+  depandFieldName: FieldSchemaDepandFieldName;
   comparison: ComparisonTypes;
   value: FieldSchemaFieldsValues;
   action: FieldSchemaAction<Rules>;
@@ -58,14 +65,18 @@ export type FieldStringSchemaRules = Pick<
   | "requiredErrorMessage"
 >;
 
+export type FieldSharedSchema = {
+  label?: string;
+  placeholder?: string;
+  fieldName: FieldSchemaFieldName;
+} & FieldSchemaStylesProperties;
+
 export type FieldStringSchema = {
   fieldType: (typeof FIELD_SCHEMA_FIELD_TYPES)["STRING"];
-  placeholder: string;
-  fieldName: FieldSchemaFieldName;
   fieldConditions: FieldsSchemaCondition<FieldStringSchemaRules>[];
   rules: FieldStringSchemaRules;
   defaultValue: FieldSchemaFieldsValueVariants["STRING"];
-};
+} & FieldSharedSchema;
 
 export type FieldNumberSchemaRules = Pick<
   FieldSchemaRules,
@@ -81,12 +92,10 @@ export type FieldNumberSchemaRules = Pick<
 
 export type FieldNumberSchema = {
   fieldType: (typeof FIELD_SCHEMA_FIELD_TYPES)["NUMBER"];
-  placeholder: string;
-  fieldName: FieldSchemaFieldName;
   fieldConditions: FieldsSchemaCondition<FieldNumberSchemaRules>[];
   rules: FieldNumberSchemaRules;
   defaultValue: FieldSchemaFieldsValueVariants["NUMBER"];
-};
+} & FieldSharedSchema;
 
 export type FieldSelectSchemaRules = Pick<
   FieldSchemaRules,
@@ -95,13 +104,11 @@ export type FieldSelectSchemaRules = Pick<
 
 export type FieldSelectSchema = {
   fieldType: (typeof FIELD_SCHEMA_FIELD_TYPES)["SELECT"];
-  placeholder: string;
-  fieldName: FieldSchemaFieldName;
   fieldConditions: FieldsSchemaCondition<FieldSelectSchemaRules>[];
   rules: FieldSelectSchemaRules;
   defaultValue: FieldSchemaFieldsValueVariants["OPTION"];
   options: FieldSchemaFieldsValueVariants["OPTION"][];
-};
+} & FieldSharedSchema;
 
 export type FieldSchema =
   | FieldStringSchema
