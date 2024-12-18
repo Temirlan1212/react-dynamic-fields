@@ -45,8 +45,8 @@ export const useState = (stateName: StateName) => {
   }: Pick<ReactDynamicFieldSchema, "fieldConditions">) => {
     return fieldConditions
       .map((condition) => {
-        const { value, comparison, depandFieldName } = condition;
-        const targetValue = getValues()?.[depandFieldName];
+        const { value, comparison, otherFieldName } = condition;
+        const targetValue = getValues()?.[otherFieldName];
         const isMatch = compareValues(targetValue, value, comparison);
         return isMatch ? condition : null;
       })

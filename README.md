@@ -64,7 +64,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        depandFieldName: "select-to-disable",
+        otherFieldName: "select-to-disable",
         comparison: "includesInObject",
         value: "title",
         action: {
@@ -87,7 +87,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     defaultValue: "",
     fieldConditions: [
       {
-        depandFieldName: "select-to-disable",
+        otherFieldName: "select-to-disable",
         comparison: "includesInObject",
         value: "summary",
         action: {
@@ -116,7 +116,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     valueFieldName: "city",
     fieldConditions: [
       {
-        depandFieldName: "select-to-disable",
+        otherFieldName: "select-to-disable",
         comparison: "includesInObject",
         value: "cities",
         action: {
@@ -305,7 +305,7 @@ Example `fieldConditions`:
 
 ```json
 {
-  "depandFieldName": "other-field",
+  "otherFieldName": "other-field",
   "comparison": "equals",
   "value": "disabled",
   "action": {

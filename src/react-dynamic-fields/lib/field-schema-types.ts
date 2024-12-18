@@ -17,7 +17,7 @@ export type FieldSchemaFieldsValues =
   | FieldSchemaFieldsValueVariants["OPTION"];
 
 export type FieldSchemaFieldName = string;
-export type FieldSchemaDepandFieldName = FieldSchemaFieldName;
+export type FieldSchemaOtherFieldName = FieldSchemaFieldName;
 export type FieldSchemaFieldTypes = FieldsTypes;
 export const FIELD_SCHEMA_FIELD_TYPES = FIELDS_TYPES;
 
@@ -47,7 +47,7 @@ export type FieldSchemaAction<Rules> = {
 };
 
 export type FieldsSchemaCondition<Rules> = {
-  depandFieldName: FieldSchemaDepandFieldName;
+  otherFieldName: FieldSchemaOtherFieldName;
   comparison: ComparisonTypes;
   value: FieldSchemaFieldsValues;
   action: FieldSchemaAction<Rules>;
