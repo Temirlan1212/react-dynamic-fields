@@ -9,6 +9,7 @@ export const useOptions = ({
 }: {
   fieldSchema: FieldsSchemaTypes["select"] | null;
 }) => {
+  const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<
     FieldSchemaFieldsValueVariants["OPTION"][]
   >([]);
@@ -21,14 +22,18 @@ export const useOptions = ({
   useEffect(() => {
     const handleFetchOptons = async () => {
       if (fieldSchema?.fetchOptions) {
+        setLoading(true);
         try {
           const { data } = await fieldSchema.fetchOptions();
           if (data) setOptions(data);
-        } catch (error) {}
+        } catch (error) {
+        } finally {
+          setLoading(false);
+        }
       }
     };
     handleFetchOptons();
   }, [fieldSchema?.fetchOptions]);
 
-  return { options };
+  return { options, loading };
 };

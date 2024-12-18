@@ -200,6 +200,7 @@ export function ReactDynamicFieldsExample() {
                             );
                           },
                           select: ({
+                            loading,
                             value,
                             options,
                             fieldErrorMessage,
@@ -208,6 +209,7 @@ export function ReactDynamicFieldsExample() {
                             actionProperties: { rules, styles },
                           }) => {
                             if (value == null) return;
+                            if (loading) return "fetching...";
 
                             return (
                               <>

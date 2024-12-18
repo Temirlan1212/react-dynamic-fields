@@ -17,7 +17,7 @@ export function ReactDynamicField({
   const fieldConditions = fieldSchema.fieldConditions;
   const stateMethods = useState(stateName);
 
-  const { options } = useOptions({
+  const { options, loading: optionsLoading } = useOptions({
     fieldSchema: fieldType === "select" ? fieldSchema : null,
   });
 
@@ -85,6 +85,7 @@ export function ReactDynamicField({
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
         options: options,
+        loading: optionsLoading,
       });
     }
   };
