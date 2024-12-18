@@ -1,3 +1,7 @@
+# Creating a markdown file for the `react-dynamic-fields-core` documentation
+
+markdown_content = """
+
 # react-dynamic-fields-core
 
 **`react-dynamic-fields-core`** is a dynamic library for creating flexible, condition-based forms in React. Define field schemas, handle field conditions, and manage form states effortlessly.
@@ -18,15 +22,15 @@
 
 Install the package using `npm` or `yarn`:
 
-```bash
+\`\`\`bash
 npm install react-dynamic-fields-core
-```
+\`\`\`
 
 or
 
-```bash
+\`\`\`bash
 yarn add react-dynamic-fields-core
-```
+\`\`\`
 
 ---
 
@@ -34,115 +38,237 @@ yarn add react-dynamic-fields-core
 
 ### 1. Import the Required Components
 
-```tsx
+\`\`\`tsx
 import {
-  ReactDynamicField,
-  ReactDynamicFields,
-  ReactDynamicFieldsProvider,
-  ReactDynamicFieldsSchema,
+ReactDynamicField,
+ReactDynamicFields,
+ReactDynamicFieldsProvider,
+ReactDynamicFieldsSchema,
 } from "react-dynamic-fields-core";
-```
+\`\`\`
 
 ### 2. Define a Field Schema
 
 A field schema specifies form fields, their rules, and conditional logic.
 
-```tsx
+\`\`\`tsx
 const fieldsSchema: ReactDynamicFieldsSchema = [
-  {
-    defaultValue: { value: "summary", label: "summary" },
-    fieldType: "select",
-    fieldName: "select-disable",
-    placeholder: "Select",
-    options: [
-      { value: "title", label: "Title" },
-      { value: "summary", label: "Summary" },
-    ],
-  },
-  {
-    fieldType: "string",
-    fieldName: "title",
-    placeholder: "Enter Title",
-    defaultValue: "",
-    rules: { required: true },
-    fieldConditions: [
-      {
-        fieldName: "select-disable",
-        comparison: "deepEquals",
-        value: { value: "title", label: "Title" },
-        action: { rules: { disabled: true } },
-      },
-    ],
-  },
+{
+fieldType: "string",
+fieldName: "title",
+placeholder: "Заголовок",
+defaultValue: "",
+style: { width: "600px" },
+rules: {
+required: false,
+maxLength: undefined,
+hidden: false,
+disabled: false,
+minLength: undefined,
+},
+fieldConditions: [
+{
+depandFieldName: "select-to-disable",
+comparison: "includesInObject",
+value: "title",
+action: {
+rules: {
+disabled: true,
+},
+styles: {
+style: { width: "100px" },
+className: "",
+},
+},
+},
+],
+},
+{
+fieldType: "string",
+fieldName: "summary",
+placeholder: "Summary",
+rules: {},
+defaultValue: "",
+fieldConditions: [
+{
+depandFieldName: "select-to-disable",
+comparison: "includesInObject",
+value: "summary",
+action: {
+rules: {
+disabled: true,
+},
+},
+},
+],
+},
+{
+defaultValue: {},
+fieldType: "select",
+fieldName: "cities",
+placeholder: "Города",
+rules: {},
+options: [],
+fetchOptions: async () => {
+const response = await fetch(
+"https://countriesnow.space/api/v0.1/countries/population/cities"
+);
+const data = await response.json();
+return { data: data.data };
+},
+labelFieldName: "country",
+valueFieldName: "city",
+fieldConditions: [
+{
+depandFieldName: "select-to-disable",
+comparison: "includesInObject",
+value: "cities",
+action: {
+rules: {
+disabled: true,
+},
+},
+},
+],
+},
 ];
-```
+
+const fieldsSchemaExtended: ReactDynamicFieldsSchema = [
+{
+defaultValue: {},
+fieldType: "select",
+fieldName: "select-to-disable",
+placeholder: "Select field you want to disable",
+rules: {},
+fieldConditions: [],
+options: fieldsSchema as unknown as Record<string, string>[],
+labelFieldName: "placeholder",
+valueFieldName: "fieldName",
+},
+...fieldsSchema,
+];
+\`\`\`
 
 ### 3. Render the Form
 
-```tsx
-export function DynamicFormExample() {
-  return (
-    <ReactDynamicFieldsProvider>
-      <ReactDynamicFields
-        stateName="example-form"
-        renderSchema={({ controller }) => (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              controller.submit({ fieldsSchema });
-              console.log(controller.getValues());
-            }}
-          >
-            {fieldsSchema.map((fieldSchema, index) => (
-              <ReactDynamicField
-                key={index}
-                fieldSchema={fieldSchema}
-                stateName="example-form"
-                renderFields={({ fieldName }) => ({
-                  input: ({ value, rules }) => (
-                    <input
-                      disabled={rules.disabled}
-                      defaultValue={value as string}
-                      placeholder={fieldSchema.placeholder}
-                      onChange={(e) =>
-                        controller.updateFieldValue({
-                          fieldName,
-                          value: e.target.value,
-                        })
-                      }
-                    />
-                  ),
-                  select: ({ value, options }) => (
-                    <select
-                      defaultValue={value?.value}
-                      onChange={(e) => {
-                        const selected = options.find(
-                          (opt) => opt.value === e.target.value
-                        );
-                        controller.updateFieldValue({
-                          fieldName,
-                          value: selected,
-                        });
+\`\`\`tsx
+const stateName = "state";
+
+export function ReactDynamicFieldsExample() {
+return (
+<>
+<ReactDynamicFieldsProvider>
+<ReactDynamicFields
+stateName={stateName}
+renderSchema={({ controller }) => {
+return (
+<form
+onSubmit={(e) => {
+e.preventDefault();
+controller.submit({ fieldsSchema: fieldsSchemaExtended });
+console.log(controller.getValues());
+}} >
+{fieldsSchemaExtended.map((fieldSchema, index) => {
+return (
+<ReactDynamicField
+key={index}
+renderFields={({ fieldName }) => {
+return {
+input: ({
+actionProperties: { rules, styles },
+value,
+fieldErrorMessage,
+}) => {
+return (
+<>
+<input
+style={styles?.style || fieldSchema.style}
+disabled={rules.disabled}
+maxLength={rules.maxLength}
+minLength={rules.minLength}
+defaultValue={value || ""}
+className="border"
+value={value || ""}
+placeholder={fieldSchema.placeholder}
+onChange={(e) => {
+const value = e.target.value;
+controller.updateFieldValue({
+fieldName,
+value,
+});
+}}
+/>
+{fieldErrorMessage}
+</>
+);
+},
+select: ({
+value,
+options,
+fieldErrorMessage,
+labelFieldName,
+valueFieldName,
+actionProperties: { rules, styles },
+}) => {
+if (value == null) return;
+
+                            return (
+                              <>
+                                <select
+                                  style={styles?.style}
+                                  disabled={rules.disabled}
+                                  defaultValue={value.value}
+                                  name={value.value}
+                                  id={value.value}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    const option = options.find(
+                                      (option) =>
+                                        option?.[valueFieldName] === value
+                                    );
+                                    if (!option) return;
+                                    controller.updateFieldValue({
+                                      fieldName,
+                                      value: option,
+                                    });
+                                  }}
+                                >
+                                  {options.map((option, index) => {
+                                    const value = option?.[valueFieldName];
+                                    const label = option?.[labelFieldName];
+                                    return (
+                                      <option
+                                        key={index + " " + value}
+                                        value={value}
+                                      >
+                                        {label}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                                {fieldErrorMessage}
+                              </>
+                            );
+                          },
+                        };
                       }}
-                    >
-                      {options.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  ),
+                      fieldSchema={fieldSchema}
+                      stateName={stateName}
+                    />
+                  );
                 })}
-              />
-            ))}
-            <button type="submit">Submit</button>
-          </form>
-        )}
-      />
-    </ReactDynamicFieldsProvider>
-  );
+
+                <button type="submit">submit</button>
+              </form>
+            );
+          }}
+        />
+      </ReactDynamicFieldsProvider>
+    </>
+
+);
 }
-```
+\`\`\`
 
 ---
 
@@ -181,18 +307,18 @@ A schema object can contain the following properties:
 
 Example `fieldConditions`:
 
-```json
+\`\`\`json
 {
-  "fieldName": "other-field",
-  "comparison": "equals",
-  "value": "disabled",
-  "action": {
-    "rules": {
-      "disabled": true
-    }
-  }
+"fieldName": "other-field",
+"comparison": "equals",
+"value": "disabled",
+"action": {
+"rules": {
+"disabled": true
 }
-```
+}
+}
+\`\`\`
 
 ---
 
@@ -205,3 +331,13 @@ Example `fieldConditions`:
 ## Contributions
 
 Contributions are welcome! Open an issue or submit a pull request to improve the library.
+"""
+
+# Save the markdown content to a file
+
+file_path = "/mnt/data/react-dynamic-fields-core.md"
+
+with open(file_path, "w") as file:
+file.write(markdown_content)
+
+file_path

@@ -7,24 +7,6 @@ import {
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {
-    defaultValue: {},
-    fieldType: "select",
-    fieldName: "select-disable",
-    placeholder: "select",
-    rules: {},
-    fieldConditions: [],
-    options: [],
-    fetchOptions: async () => {
-      const response = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/population/cities"
-      );
-      const data = await response.json();
-      return { data: data.data };
-    },
-    labelFieldName: "country",
-    valueFieldName: "city",
-  },
-  {
     fieldType: "string",
     fieldName: "title",
     placeholder: "Заголовок",
@@ -39,9 +21,9 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     },
     fieldConditions: [
       {
-        depandFieldName: "select-disable",
+        depandFieldName: "select-to-disable",
         comparison: "includesInObject",
-        value: "TIRANA",
+        value: "title",
         action: {
           rules: {
             disabled: true,
@@ -62,9 +44,9 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     defaultValue: "",
     fieldConditions: [
       {
-        depandFieldName: "select-disable",
-        comparison: "deepEquals",
-        value: { value: "summary", label: "summary" },
+        depandFieldName: "select-to-disable",
+        comparison: "includesInObject",
+        value: "summary",
         action: {
           rules: {
             disabled: true,
@@ -74,13 +56,49 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     ],
   },
   {
-    defaultValue: "",
-    fieldType: "string",
-    fieldName: "new",
-    placeholder: "New",
+    defaultValue: {},
+    fieldType: "select",
+    fieldName: "cities",
+    placeholder: "Города",
+    rules: {},
+    options: [],
+    fetchOptions: async () => {
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries/population/cities"
+      );
+      const data = await response.json();
+      return { data: data.data };
+    },
+    labelFieldName: "country",
+    valueFieldName: "city",
+    fieldConditions: [
+      {
+        depandFieldName: "select-to-disable",
+        comparison: "includesInObject",
+        value: "cities",
+        action: {
+          rules: {
+            disabled: true,
+          },
+        },
+      },
+    ],
+  },
+];
+
+const fieldsSchemaExtended: ReactDynamicFieldsSchema = [
+  {
+    defaultValue: {},
+    fieldType: "select",
+    fieldName: "select-to-disable",
+    placeholder: "Select field you want to disable",
     rules: {},
     fieldConditions: [],
+    options: fieldsSchema as unknown as Record<string, string>[],
+    labelFieldName: "placeholder",
+    valueFieldName: "fieldName",
   },
+  ...fieldsSchema,
 ];
 
 const stateName = "state";
@@ -96,11 +114,11 @@ export function ReactDynamicFieldsExample() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  controller.submit({ fieldsSchema });
+                  controller.submit({ fieldsSchema: fieldsSchemaExtended });
                   console.log(controller.getValues());
                 }}
               >
-                {fieldsSchema.map((fieldSchema, index) => {
+                {fieldsSchemaExtended.map((fieldSchema, index) => {
                   return (
                     <ReactDynamicField
                       key={index}
@@ -140,12 +158,15 @@ export function ReactDynamicFieldsExample() {
                             fieldErrorMessage,
                             labelFieldName,
                             valueFieldName,
+                            actionProperties: { rules, styles },
                           }) => {
                             if (value == null) return;
 
                             return (
                               <>
                                 <select
+                                  style={styles?.style}
+                                  disabled={rules.disabled}
                                   defaultValue={value.value}
                                   name={value.value}
                                   id={value.value}
