@@ -54,6 +54,7 @@ export function ReactDynamicField({
   const renderInput = () => {
     if (fieldType === "string" && input && typeof fieldValue === typeof "") {
       return input({
+        ...fieldSchema,
         actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["string"]["defaultValue"],
@@ -65,6 +66,7 @@ export function ReactDynamicField({
   const renderNumber = () => {
     if (fieldType === "number" && number && typeof fieldValue === typeof 0) {
       return number({
+        ...fieldSchema,
         actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["number"]["defaultValue"],

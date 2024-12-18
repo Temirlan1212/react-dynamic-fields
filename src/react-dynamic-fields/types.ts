@@ -32,20 +32,22 @@ export type ReactDynamicFieldsRenderFields = ({
     props: ReactDynamicFieldsRenderField<
       ReactDynamicFieldsFieldsSchemaTypes["string"]["fieldConditions"][0]["action"],
       ReactDynamicFieldsFieldsSchemaTypes["string"]["defaultValue"]
-    >
+    > &
+      ReactDynamicFieldsFieldsSchemaTypes["string"]
   ) => React.ReactNode;
   number?: (
     props: ReactDynamicFieldsRenderField<
       ReactDynamicFieldsFieldsSchemaTypes["number"]["fieldConditions"][0]["action"],
       ReactDynamicFieldsFieldsSchemaTypes["number"]["defaultValue"]
-    >
+    > &
+      ReactDynamicFieldsFieldsSchemaTypes["number"]
   ) => React.ReactNode;
   select?: (
     props: ReactDynamicFieldsRenderField<
       ReactDynamicFieldsFieldsSchemaTypes["select"]["fieldConditions"][0]["action"],
       ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"]
     > &
-      Omit<ReactDynamicFieldsFieldsSchemaTypes["select"], "rules"> & {
+      ReactDynamicFieldsFieldsSchemaTypes["select"] & {
         loading: boolean;
       }
   ) => React.ReactNode | Promise<React.ReactNode>;
