@@ -305,7 +305,7 @@ Example `fieldConditions`:
 
 ```json
 {
-  "fieldName": "other-field",
+  "depandFieldName": "other-field",
   "comparison": "equals",
   "value": "disabled",
   "action": {
