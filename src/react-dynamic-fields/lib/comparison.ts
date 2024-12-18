@@ -6,7 +6,8 @@ export type ComparisonTypes =
   | "lessThan"
   | "greaterThanOrEqual"
   | "lessThanOrEqual"
-  | "maxLength";
+  | "maxLength"
+  | "includesInObject";
 
 export function compareValues<T>(
   value1: T,
@@ -14,6 +15,9 @@ export function compareValues<T>(
   comparison: ComparisonTypes
 ): boolean {
   switch (comparison) {
+    case "includesInObject":
+      if (typeof value1 !== "object") return false;
+      return Object.values(value1 as any).includes(value2);
     case "equals":
       return value1 === value2;
     case "deepEquals":

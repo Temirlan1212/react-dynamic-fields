@@ -44,10 +44,9 @@ export type ReactDynamicFieldsRenderFields = ({
     props: ReactDynamicFieldsRenderField<
       ReactDynamicFieldsFieldsSchemaTypes["select"]["fieldConditions"][0]["action"],
       ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"]
-    > & {
-      options: ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"][];
-    }
-  ) => React.ReactNode;
+    > &
+      ReactDynamicFieldsFieldsSchemaTypes["select"]
+  ) => React.ReactNode | Promise<React.ReactNode>;
 };
 
 export type ReactDynamicFieldProps = {

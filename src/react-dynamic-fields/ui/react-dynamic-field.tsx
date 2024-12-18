@@ -5,6 +5,7 @@ import {
 } from "../types";
 import { useState } from "../state/use-state";
 import { useEffect } from "react";
+import { useOptions } from "../lib/use-options";
 
 export function ReactDynamicField({
   fieldSchema,
@@ -15,6 +16,10 @@ export function ReactDynamicField({
   const fieldName = fieldSchema.fieldName;
   const fieldConditions = fieldSchema.fieldConditions;
   const stateMethods = useState(stateName);
+
+  const { options } = useOptions({
+    fieldSchema: fieldType === "select" ? fieldSchema : null,
+  });
 
   const fieldValuesState = stateMethods.getValues();
   const fieldErrorsState = stateMethods.getErrors();
@@ -71,11 +76,15 @@ export function ReactDynamicField({
   const renderSelect = () => {
     if (fieldType === "select" && select) {
       return select({
+        ...fieldSchema,
+        defaultValue: options?.[0] ? options[0] : fieldSchema.defaultValue,
+        labelFieldName: fieldSchema.labelFieldName || "label",
+        valueFieldName: fieldSchema.valueFieldName || "value",
         actionProperties: conditionActionProperties,
         value:
           fieldValue as ReactDynamicFieldsFieldsSchemaTypes["select"]["defaultValue"],
         fieldErrorMessage: fieldErrorMessage,
-        options: fieldSchema["options"],
+        options: options,
       });
     }
   };

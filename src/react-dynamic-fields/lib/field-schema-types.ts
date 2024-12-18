@@ -102,12 +102,19 @@ export type FieldSelectSchemaRules = Pick<
   "disabled" | "hidden" | "required" | "requiredErrorMessage"
 >;
 
+export type FieldFetchOptions = () => Promise<{
+  data: any;
+}>;
+
 export type FieldSelectSchema = {
   fieldType: (typeof FIELD_SCHEMA_FIELD_TYPES)["SELECT"];
   fieldConditions: FieldsSchemaCondition<FieldSelectSchemaRules>[];
   rules: FieldSelectSchemaRules;
   defaultValue: FieldSchemaFieldsValueVariants["OPTION"];
   options: FieldSchemaFieldsValueVariants["OPTION"][];
+  fetchOptions?: FieldFetchOptions;
+  labelFieldName: string;
+  valueFieldName: string;
 } & FieldSharedSchema;
 
 export type FieldSchema =

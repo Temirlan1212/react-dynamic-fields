@@ -7,16 +7,22 @@ import {
 
 const fieldsSchema: ReactDynamicFieldsSchema = [
   {
-    defaultValue: { value: "summary", label: "summary" },
+    defaultValue: {},
     fieldType: "select",
     fieldName: "select-disable",
     placeholder: "select",
     rules: {},
     fieldConditions: [],
-    options: [
-      { value: "title", label: "title" },
-      { value: "summary", label: "summary" },
-    ],
+    options: [],
+    fetchOptions: async () => {
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries/population/cities"
+      );
+      const data = await response.json();
+      return { data: data.data };
+    },
+    labelFieldName: "country",
+    valueFieldName: "city",
   },
   {
     fieldType: "string",
@@ -34,35 +40,15 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
     fieldConditions: [
       {
         depandFieldName: "select-disable",
-        comparison: "deepEquals",
-        value: { value: "title", label: "title" },
+        comparison: "includesInObject",
+        value: "TIRANA",
         action: {
           rules: {
             disabled: true,
           },
           styles: {
-            style: { width: "10px" },
+            style: { width: "100px" },
             className: "",
-          },
-        },
-      },
-      {
-        depandFieldName: "summary",
-        comparison: "equals",
-        value: "limited",
-        action: {
-          rules: {
-            maxLength: 2,
-          },
-        },
-      },
-      {
-        depandFieldName: "new",
-        comparison: "equals",
-        value: "required",
-        action: {
-          rules: {
-            required: true,
           },
         },
       },
@@ -97,36 +83,7 @@ const fieldsSchema: ReactDynamicFieldsSchema = [
   },
 ];
 
-const fieldsSchema2: ReactDynamicFieldsSchema = [
-  {
-    fieldType: "string",
-    fieldName: "test",
-    placeholder: "Test",
-    defaultValue: "",
-    rules: {
-      required: false,
-      maxLength: undefined,
-      hidden: false,
-      disabled: false,
-      minLength: undefined,
-    },
-    fieldConditions: [
-      {
-        depandFieldName: "summary",
-        comparison: "equals",
-        value: "disabled",
-        action: {
-          rules: {
-            disabled: true,
-          },
-        },
-      },
-    ],
-  },
-];
-
-const stateName = "newForm-2";
-const stateName2 = "newForm-2";
+const stateName = "state";
 
 export function ReactDynamicFieldsExample() {
   return (
@@ -177,7 +134,13 @@ export function ReactDynamicFieldsExample() {
                               </>
                             );
                           },
-                          select: ({ value, options, fieldErrorMessage }) => {
+                          select: ({
+                            value,
+                            options,
+                            fieldErrorMessage,
+                            labelFieldName,
+                            valueFieldName,
+                          }) => {
                             if (value == null) return;
 
                             return (
@@ -189,7 +152,8 @@ export function ReactDynamicFieldsExample() {
                                   onChange={(e) => {
                                     const value = e.target.value;
                                     const option = options.find(
-                                      (option) => option.value === value
+                                      (option) =>
+                                        option?.[valueFieldName] === value
                                     );
                                     if (!option) return;
                                     controller.updateFieldValue({
@@ -199,12 +163,14 @@ export function ReactDynamicFieldsExample() {
                                   }}
                                 >
                                   {options.map((option, index) => {
+                                    const value = option?.[valueFieldName];
+                                    const label = option?.[labelFieldName];
                                     return (
                                       <option
-                                        key={index + " " + option.value}
-                                        value={option.value}
+                                        key={index + " " + value}
+                                        value={value}
                                       >
-                                        {option.label}
+                                        {label}
                                       </option>
                                     );
                                   })}
@@ -217,63 +183,6 @@ export function ReactDynamicFieldsExample() {
                       }}
                       fieldSchema={fieldSchema}
                       stateName={stateName}
-                    />
-                  );
-                })}
-
-                <button type="submit">submit</button>
-              </form>
-            );
-          }}
-        />
-
-        <ReactDynamicFields
-          stateName={stateName2}
-          renderSchema={({ controller }) => {
-            return (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  controller.submit({ fieldsSchema: fieldsSchema2 });
-                }}
-              >
-                {fieldsSchema2.map((fieldSchema, index) => {
-                  return (
-                    <ReactDynamicField
-                      key={index}
-                      renderFields={({ fieldName }) => {
-                        return {
-                          input: ({
-                            actionProperties: { rules },
-                            value,
-                            fieldErrorMessage,
-                          }) => {
-                            return (
-                              <>
-                                <input
-                                  disabled={rules.disabled}
-                                  maxLength={rules.maxLength}
-                                  minLength={rules.minLength}
-                                  defaultValue={(value as string) || ""}
-                                  className="border"
-                                  value={(value as string) || ""}
-                                  placeholder={fieldSchema.placeholder}
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    controller.updateFieldValue({
-                                      fieldName,
-                                      value,
-                                    });
-                                  }}
-                                />
-                                {fieldErrorMessage}
-                              </>
-                            );
-                          },
-                        };
-                      }}
-                      fieldSchema={fieldSchema}
-                      stateName={stateName2}
                     />
                   );
                 })}
